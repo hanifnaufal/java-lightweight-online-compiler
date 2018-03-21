@@ -5,25 +5,23 @@
   * @param {Number} timeout_value: The Time_out limit for code execution in Docker
   * @param {String} path: The current working directory where the current folder is kept
   * @param {String} folderName: The name of the folder that would be mounted/shared with Docker container, this will be concatenated with path
-  * @param {String} file_name: The file_name to which source code will be written
   * @param {String} code: The actual code
 */
 var Sandbox = function(
   timeout_value,
   path,
   folderName,
-  file_name,
   code,
   stdin_data
 ){
 
   this.path = path;
   this.folderName = folderName;
-  this.file_name = file_name;
   this.timeout_value = timeout_value;
   this.code = code;
   this.stdin_data = stdin_data;
 
+  this.file_name = "Main.java";
   this.vm_name = "frolvlad/alpine-oraclejdk8:slim";
   this.workingDirectory = this.path + this.folderName;
   this.codeAbsolutePath = this.workingDirectory + "/" + this.file_name;
@@ -61,8 +59,6 @@ Sandbox.prototype.prepare = function(success) {
   var sandbox = this;
   var commands =
     "mkdir -p " + sandbox.workingDirectory + " && "
-    // TODO verify
-    // "cp "+ this.path + "/Payload/* "+ sandbox.workingDirectory +" && " +
     "chmod 777 " + sandbox.workingDirectory;
 
   exec(commands, function(st) {
@@ -111,9 +107,7 @@ Sandbox.prototype.execute = function(success) {
   var timeoutCounter = 0;
   var sandbox = this;
 
-  //TODO remove. This is old
-  // var dockerCommand = this.path+'DockerTimeout.sh ' + this.timeout_value + 's -u mysql -e \'NODE_PATH=/usr/local/lib/node_modules\' -i -t -v  "' + this.path + this.folder + '":/usercode ' + this.vm_name + ' /usercode/script.sh ' + this.compiler_name + ' ' + this.file_name + ' ' + this.output_command+ ' ' + this.extra_arguments;
-  var dockerCommand = "docker run --rm -v " + sandbox.workingDirectory + ":/mnt --workdir /mnt " + vm_name + " sh -c 'javac Main.java && java Main < stdinFile'";
+  var dockerCommand = "docker run --rm -v " + sandbox.workingDirectory + ":/mnt --workdir /mnt " + vm_name + " sh -c 'javac " + sandbox.file_name + " && java Main < stdinFile'";
   console.log(dockerCommand);
   //This is done ASYNCHRONOUSLY. TODO ??????
   // exec(st);
@@ -200,4 +194,4 @@ Sandbox.prototype.execute = function(success) {
 }
 
 
-module.exports = DockerSandbox;
+module.exports = Sandbox;
