@@ -10,7 +10,6 @@ router.get('/', function(req, res, next)
 router.post('/compile', bruteforce.prevent, function(req, res, next)
 {
     compile.compile(
-      req.body.language,
       req.body.code,
       req.body.stdin,
       res

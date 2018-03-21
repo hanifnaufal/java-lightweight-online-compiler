@@ -7,7 +7,7 @@ function random(size) {
 
 var Compile = {};
 // TODO res
-Compile.compile = function(language, code, stdin, res) {
+Compile.compile = function(code, stdin, res) {
     var folder= '/tmp/elcompilo/' + random(10);
     var path=__dirname+"/";
     var vm_name='virtual_machine';
