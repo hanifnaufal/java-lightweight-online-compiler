@@ -5,37 +5,29 @@
   * @param {Number} timeout_value: The Time_out limit for code execution in Docker
   * @param {String} path: The current working directory where the current folder is kept
   * @param {String} folderName: The name of the folder that would be mounted/shared with Docker container, this will be concatenated with path
-  * @param {String} vm_name: The TAG of the Docker VM that we wish to execute
-  * @param {String} compiler_name: The compiler/interpretor to use for carrying out the translation
   * @param {String} file_name: The file_name to which source code will be written
   * @param {String} code: The actual code
-  * @param {String} output_command: Used in case of compilers only, to execute the object code, send " " in case of interpretors
 */
 var Sandbox = function(
   timeout_value,
   path,
   folderName,
-  vm_name,
-  compiler_name,
   file_name,
   code,
-  output_command,
-  languageName,
-  e_arguments,
-  stdin_data)
-{
+  stdin_data
+){
 
-    this.timeout_value = timeout_value;
-    this.path = path;
-    this.folderName = folderName;
-    this.vm_name = vm_name;
-    this.compiler_name = compiler_name;
-    this.file_name = file_name;
-    this.code = code;
-    this.output_command = output_command;
-    this.langName = languageName;
-    this.extra_arguments = e_arguments;
-    this.stdin_data = stdin_data;
+  this.path = path;
+  this.folderName = folderName;
+  this.file_name = file_name;
+  this.timeout_value = timeout_value;
+  this.code = code;
+  this.stdin_data = stdin_data;
+
+  this.vm_name = "frolvlad/alpine-oraclejdk8:slim";
+  this.workingDirectory = this.path + this.folderName;
+  this.codeAbsolutePath = this.workingDirectory + "/" + this.file_name;
+  this.stdinAbsolutePath = this.workingDirectory + "/inputFile";
 }
 
 /**
@@ -46,10 +38,10 @@ var Sandbox = function(
 */
 Sandbox.prototype.run = function(success)
 {
-    var sandbox = this;
-    this.prepare(function() {
-        sandbox.execute(success);
-    });
+  var sandbox = this;
+  this.prepare(function() {
+      sandbox.execute(success);
+  });
 }
 
 /**
@@ -67,27 +59,23 @@ Sandbox.prototype.prepare = function(success) {
   var exec = require('child_process').exec;
   var fs = require('fs');
   var sandbox = this;
-  var folderAbsolutePath = sandbox.path + sandbox.folderName;
   var commands =
-    "mkdir -p " + folderAbsolutePath + " && "
+    "mkdir -p " + sandbox.workingDirectory + " && "
     // TODO verify
-    // "cp "+ this.path + "/Payload/* "+ folderAbsolutePath +" && " +
-    "chmod 777 " + folderAbsolutePath;
+    // "cp "+ this.path + "/Payload/* "+ sandbox.workingDirectory +" && " +
+    "chmod 777 " + sandbox.workingDirectory;
 
   exec(commands, function(st) {
-    var codeAbsolutePath = folderAbsolutePath + "/" + sandbox.file_name;
-    var content = sandbox.code;
-    fs.writeFile(codeAbsolutePath, content, function(err) {
+    fs.writeFile(sandbox.codeAbsolutePath, sandbox.code, function(err) {
         if (err) {
           console.log(err);
         } else {
           console.log("file was saved!");
           //TODO verify
           // exec("chmod 777 \'" + fileAbsolutePath +"\'")
-          exec("chmod 777 " + fileAbsolutePath);
+          exec("chmod 777 " + sandbox.codeAbsolutePath);
 
-          var stdinPath = folderAbsolutePath + "/inputFile";
-          fs.writeFile(stdinPath, sandbox.stdin_data, function(err) {
+          fs.writeFile(sandbox.stdinAbsolutePath, sandbox.stdin_data, function(err) {
               if (err) {
                   console.log(err);
               } else {
@@ -125,7 +113,7 @@ Sandbox.prototype.execute = function(success) {
 
   //TODO remove. This is old
   // var dockerCommand = this.path+'DockerTimeout.sh ' + this.timeout_value + 's -u mysql -e \'NODE_PATH=/usr/local/lib/node_modules\' -i -t -v  "' + this.path + this.folder + '":/usercode ' + this.vm_name + ' /usercode/script.sh ' + this.compiler_name + ' ' + this.file_name + ' ' + this.output_command+ ' ' + this.extra_arguments;
-  var dockerCommand = "";
+  var dockerCommand = "docker run --rm -v " + sandbox.workingDirectory + ":/mnt --workdir /mnt " + vm_name + " sh -c 'javac Main.java && java Main < stdinFile'";
   console.log(dockerCommand);
   //This is done ASYNCHRONOUSLY. TODO ??????
   // exec(st);
