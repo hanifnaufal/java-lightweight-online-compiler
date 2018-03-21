@@ -8,15 +8,12 @@ function random(size) {
 var Compile = {};
 // TODO res
 Compile.compile = function(code, stdin, res) {
-    var folderName= '/tmp/elcompilo/' + random(10);
-    var path=__dirname+"/";
-    var vm_name='virtual_machine';
+    var workingDirectory= '/tmp/elcompilo/' + random(10);
     var timeout_value=20;
-
+    
     var sandboxType = new sandbox(
       timeout_value,
-      path,
-      folderName,
+      workingDirectory,
       code,
       stdin
     );

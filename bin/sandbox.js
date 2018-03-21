@@ -3,27 +3,23 @@
   * @variable Sandbox
   * @description This constructor stores all the arguments needed to prepare and execute a Docker Sandbox
   * @param {Number} timeout_value: The Time_out limit for code execution in Docker
-  * @param {String} path: The current working directory where the current folder is kept
-  * @param {String} folderName: The name of the folder that would be mounted/shared with Docker container, this will be concatenated with path
+  * @param {String} workingDirectory: The name of the folder that would be mounted/shared with Docker container, this will be concatenated with path
   * @param {String} code: The actual code
 */
 var Sandbox = function(
   timeout_value,
-  path,
-  folderName,
+  workingDirectory,
   code,
   stdin_data
 ){
-
-  this.path = path;
-  this.folderName = folderName;
   this.timeout_value = timeout_value;
   this.code = code;
   this.stdin_data = stdin_data;
+  this.workingDirectory = workingDirectory;
 
   this.file_name = "Main.java";
   this.vm_name = "frolvlad/alpine-oraclejdk8:slim";
-  this.workingDirectory = this.path + this.folderName;
+
   this.codeAbsolutePath = this.workingDirectory + "/" + this.file_name;
   this.stdinAbsolutePath = this.workingDirectory + "/inputFile";
 }
@@ -58,7 +54,7 @@ Sandbox.prototype.prepare = function(success) {
   var fs = require('fs');
   var sandbox = this;
   var commands =
-    "mkdir -p " + sandbox.workingDirectory + " && "
+    "sudo mkdir -p " + sandbox.workingDirectory + " && "
     "chmod 777 " + sandbox.workingDirectory;
 
   exec(commands, function(st) {
