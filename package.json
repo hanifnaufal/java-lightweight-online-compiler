@@ -1,0 +1,13 @@
+{
+ "name": "elcompilo",
+ "version": "1.0.0",
+ "main": "app.js",
+ "dependencies": {
+   "express": "4.*",
+   "body-parser" : "*",
+   "express-brute":"*",
+   "exports": "*"
+ },
+ "author": "Muhammad Hanif Naufal",
+ "license": "MIT"
+}
