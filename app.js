@@ -6,8 +6,7 @@ var app = express();
 var server = http.createServer(app);
 var port=8080;
 
-
-
+env = process.env.NODE_ENV;
 
 var ExpressBrute = require('express-brute');
 var store = new ExpressBrute.MemoryStore(); // stores state locally, don't use this in production

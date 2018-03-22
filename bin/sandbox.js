@@ -102,11 +102,17 @@ Sandbox.prototype.execute = function(callback) {
   var sandbox = this;
 
   //TODO timeout not working
-  var dockerCommand = "docker run --rm"
-                      + " --stop-timeout " + sandbox.timeout_value
-                      + " -v " + sandbox.workingDirectory + ":/mnt --workdir /mnt " + sandbox.vm_name
-                      + " sh -c 'javac " + sandbox.file_name + " && java Main < inputFile'"
-                      + " && rm -r " + sandbox.workingDirectory;
+  var dockerCommand;
+  if (env == 'prod') {
+    dockerCommand = "docker run --rm"
+                    + " --stop-timeout " + sandbox.timeout_value
+                    + " -v " + sandbox.workingDirectory + ":/mnt --workdir /mnt " + sandbox.vm_name
+                    + " sh -c 'javac " + sandbox.file_name + " && java Main < inputFile'"
+                    + " && rm -r " + sandbox.workingDirectory;
+  } else {
+    dockerCommand = " javac " + sandbox.workingDirectory + "/" +  sandbox.file_name + " && java -classpath " + sandbox.workingDirectory + "/ Main < " + sandbox.workingDirectory + "/inputFile"
+                    + " && rm -r " + sandbox.workingDirectory;
+  }
 
   exec(dockerCommand, (error, stdout, stderr) => {
     if (error) {

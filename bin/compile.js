@@ -22,10 +22,7 @@ Compile.compile = function(code, stdin, res) {
       console.log("Data: "+ output)
       res.send({
         output:output,
-        langid: "language",
-        code:code,
-        errors:"err",
-        time:"exec_time"
+        code:code
       });
     });
 
