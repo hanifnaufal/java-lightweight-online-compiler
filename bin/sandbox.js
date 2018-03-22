@@ -54,7 +54,7 @@ Sandbox.prototype.prepare = function(success) {
   var fs = require('fs');
   var sandbox = this;
   var commands =
-    "sudo mkdir -p " + sandbox.workingDirectory + " && "
+    "mkdir -p " + sandbox.workingDirectory + " && " +
     "chmod 777 " + sandbox.workingDirectory;
 
   exec(commands, function(st) {
@@ -62,16 +62,13 @@ Sandbox.prototype.prepare = function(success) {
         if (err) {
           console.log(err);
         } else {
-          console.log("file was saved!");
-          //TODO verify
-          // exec("chmod 777 \'" + fileAbsolutePath +"\'")
+          // console.log("file was saved!");
           exec("chmod 777 " + sandbox.codeAbsolutePath);
 
           fs.writeFile(sandbox.stdinAbsolutePath, sandbox.stdin_data, function(err) {
               if (err) {
                   console.log(err);
               } else {
-                  console.log("Input file was saved!");
                   success();
               }
           });
@@ -103,8 +100,7 @@ Sandbox.prototype.execute = function(success) {
   var timeoutCounter = 0;
   var sandbox = this;
 
-  var dockerCommand = "docker run --rm -v " + sandbox.workingDirectory + ":/mnt --workdir /mnt " + vm_name + " sh -c 'javac " + sandbox.file_name + " && java Main < stdinFile'";
-  console.log(dockerCommand);
+  var dockerCommand = "docker run --rm -v " + sandbox.workingDirectory + ":/mnt --workdir /mnt " + sandbox.vm_name + " sh -c 'javac " + sandbox.file_name + " && java Main < stdinFile'";
   //This is done ASYNCHRONOUSLY. TODO ??????
   // exec(st);
 
