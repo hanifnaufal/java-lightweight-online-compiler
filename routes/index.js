@@ -4,7 +4,7 @@ var router = app.Router();
 
 router.get('/', function(req, res, next)
 {
-    res.sendfile("./views/index.html");
+    res.sendfile("./views/codepad.html");
 });
 
 router.post('/compile', bruteforce.prevent, function(req, res, next)
