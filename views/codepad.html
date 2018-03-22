@@ -1,27 +1,61 @@
+<!-- https://ace.c9.io  -->
+<!-- https://ace.c9.io/build/kitchen-sink.html -->
+<!-- https://github.com/ajaxorg/ace/wiki/Extensions -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <title>ACE in Action</title>
 <style type="text/css" media="screen">
-    #editor {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
+
+    .editor, .toolbar, .result {
+        border: 1px solid lightgray;
+        margin: auto;
+        width: 80%;
     }
+    .editor {
+        height: 200px;
+    }
+
 </style>
 </head>
 <body>
-<div id="editor"></div>
+
+<div id="mainEditor" class="editor resizable"></div>
+<div class="toolbar">
+  <button id="compileBtn">compile</button>
+  <button id="screenBtn">Fullscreen</button>
+</div>
+<div class="result">
+  It is something
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.1/ace.js" type="text/javascript" charset="utf-8"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.1/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
 <script>
-    var editor = ace.edit("editor");
+    ace.require("ace/ext/language_tools");
+    var editor = ace.edit("mainEditor");
     editor.setTheme("ace/theme/monokai");
     editor.session.setMode("ace/mode/java");
+    editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true
+    });
+
     editor.setValue("public class Main {\r\n  public static void main(String[] args) {\r\n    System.out.println(\"Hello World\");\r\n  }\r\n}\r\n");
+
+    editor.session.setTabSize(4);
+    editor.commands.addCommand({
+        name: 'NotSave',
+        bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
+        exec: function(editor) {
+            //no - op
+        },
+        readOnly: true // false if this command should not apply in readOnly mode
+    });
+
+
+
 </script>
 </body>
 </html>
