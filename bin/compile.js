@@ -6,8 +6,7 @@ function random(size) {
 }
 
 var Compile = {};
-// TODO res
-Compile.compile = function(code, stdin, res) {
+Compile.compile = (code, stdin, callback) => {
     var workingDirectory = '/tmp/elcompilo/' + random(10);
     var timeout_value = 20;
 
@@ -19,8 +18,7 @@ Compile.compile = function(code, stdin, res) {
     );
 
     sandboxType.run((output) => {
-      console.log("Data: "+ output)
-      res.send({
+      callback({
         output:output,
         code:code
       });

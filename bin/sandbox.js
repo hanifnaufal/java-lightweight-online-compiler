@@ -1,4 +1,4 @@
-var errorMessage = "System Error";
+const errorMessage = "Site System Error. Sorry for the inconvenience.";
 
 /**
   * @Constructor
