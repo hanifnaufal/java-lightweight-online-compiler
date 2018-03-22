@@ -1,3 +1,5 @@
+var errorMessage = "System Error";
+
 /**
   * @Constructor
   * @variable Sandbox
@@ -28,13 +30,13 @@ var Sandbox = function(
  * @function
  * @name Sandbox.run
  * @description Function that first prepares the Docker environment and then executes the Docker sandbox
- * @param {Function pointer} success
+ * @param {Function pointer} callback
 */
-Sandbox.prototype.run = function(success)
+Sandbox.prototype.run = function(callback)
 {
   var sandbox = this;
   this.prepare(function() {
-      sandbox.execute(success);
+      sandbox.execute(callback);
   });
 }
 
@@ -47,9 +49,9 @@ Sandbox.prototype.run = function(success)
  * code written in 'code' variable of this class is copied into this file.
  * Summary: This function produces a folder that contains the source file and 2 scripts, this folder is mounted to our
  * Docker container when we run it.
- * @param {Function pointer} success ?????
+ * @param {Function pointer} callback
 */
-Sandbox.prototype.prepare = function(success) {
+Sandbox.prototype.prepare = function(callback) {
   var exec = require('child_process').exec;
   var fs = require('fs');
   var sandbox = this;
@@ -62,14 +64,13 @@ Sandbox.prototype.prepare = function(success) {
         if (err) {
           console.log(err);
         } else {
-          // console.log("file was saved!");
           exec("chmod 777 " + sandbox.codeAbsolutePath);
 
           fs.writeFile(sandbox.stdinAbsolutePath, sandbox.stdin_data, function(err) {
               if (err) {
                   console.log(err);
               } else {
-                  success();
+                  callback();
               }
           });
         }
@@ -91,27 +92,28 @@ Sandbox.prototype.prepare = function(success) {
  *
  * Summary: Run the Docker container and execute script.sh inside it. Return the output generated and delete the mounted folder
  *
- * @param {Function pointer} success
+ * @param {Function pointer} callback
 */
 
-Sandbox.prototype.execute = function(success) {
+Sandbox.prototype.execute = function(callback) {
   var exec = require('child_process').exec;
   var fs = require('fs');
   var timeoutCounter = 0;
   var sandbox = this;
 
+  //TODO timeout not working
   var dockerCommand = "docker run --rm"
                       + " --stop-timeout " + sandbox.timeout_value
                       + " -v " + sandbox.workingDirectory + ":/mnt --workdir /mnt " + sandbox.vm_name
                       + " sh -c 'javac " + sandbox.file_name + " && java Main < inputFile'"
                       + " && rm -r " + sandbox.workingDirectory;
-  console.log(dockerCommand);
+
   exec(dockerCommand, (error, stdout, stderr) => {
     if (error) {
       console.error('exec error:' + error);
+      callback(errorMessage);
     }
-    console.log("stdout " + stdout)
-    success(stdout);
+    callback(stdout);
   });
 }
 
