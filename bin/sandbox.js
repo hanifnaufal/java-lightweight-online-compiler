@@ -100,89 +100,19 @@ Sandbox.prototype.execute = function(success) {
   var timeoutCounter = 0;
   var sandbox = this;
 
-  var dockerCommand = "docker run --rm -v " + sandbox.workingDirectory + ":/mnt --workdir /mnt " + sandbox.vm_name + " sh -c 'javac " + sandbox.file_name + " && java Main < stdinFile'";
-  //This is done ASYNCHRONOUSLY. TODO ??????
-  // exec(st);
-
-  console.log("------------------------------")
-  //Check For File named "completed" after every 1 second
-
-  // var intid = setInterval(function()
-  //     {
-  //         //Displaying the checking message after 1 second interval, testing purposes only
-  //         //console.log("Checking " + sandbox.path+sandbox.folder + ": for completion: " + timeoutCounter);
-  //
-  //         timeoutCounter = timeoutCounter + 1;
-  //
-  //         fs.readFile(sandbox.path + sandbox.folder + '/completed', 'utf8', function(err, data) {
-  //
-  //         //if file is not available yet and the file interval is not yet up carry on
-  //         if (err && timeoutCounter < sandbox.timeout_value)
-  //         {
-  //             //console.log(err);
-  //             return;
-  //         }
-  //         //if file is found simply display a message and proceed
-  //         else if (timeoutCounter < sandbox.timeout_value)
-  //         {
-  //             console.log("DONE")
-  //             //check for possible errors
-  //             fs.readFile(sandbox.path + sandbox.folder + '/errors', 'utf8', function(err2, data2)
-  //             {
-  //             	if(!data2) data2=""
-  //              		console.log("Error file: ")
-  //              		console.log(data2)
-  //
-  //              		console.log("Main File")
-  //              		console.log(data)
-  //
-  //             		var lines = data.toString().split('*-COMPILEBOX::ENDOFOUTPUT-*')
-  //             		data=lines[0]
-  //             		var time=lines[1]
-  //
-  //             		console.log("Time: ")
-  //             		console.log(time)
-  //
-  //
-  //    	           	success(data,time,data2)
-  //             });
-  //
-  //             //return the data to the calling functoin
-  //
-  //         }
-  //         //if time is up. Save an error message to the data variable
-  //         else
-  //         {
-  //         	//Since the time is up, we take the partial output and return it.
-  //         	fs.readFile(sandbox.path + sandbox.folder + '/logfile.txt', 'utf8', function(err, data){
-  //         		if (!data) data = "";
-  //                 data += "\nExecution Timed Out";
-  //                 console.log("Timed Out: "+sandbox.folder+" "+sandbox.langName)
-  //                 fs.readFile(sandbox.path + sandbox.folder + '/errors', 'utf8', function(err2, data2)
-  //               {
-  //               	if(!data2) data2=""
-  //
-  //             			var lines = data.toString().split('*---*')
-  //             			data=lines[0]
-  //             			var time=lines[1]
-  //
-  //             			console.log("Time: ")
-  //             			console.log(time)
-  //
-  //                  	success(data,data2)
-  //               });
-  //         	});
-  //
-  //         }
-  //
-  //         //now remove the temporary directory
-  //         console.log("ATTEMPTING TO REMOVE: " + sandbox.folder);
-  //         console.log("------------------------------")
-  //         exec("rm -r " + sandbox.folder);
-  //
-  //         clearInterval(intid);
-  //     });
-  // }, 1000);
+  var dockerCommand = "docker run --rm"
+                      + " --stop-timeout " + sandbox.timeout_value
+                      + " -v " + sandbox.workingDirectory + ":/mnt --workdir /mnt " + sandbox.vm_name
+                      + " sh -c 'javac " + sandbox.file_name + " && java Main < inputFile'"
+                      + " && rm -r " + sandbox.workingDirectory;
+  console.log(dockerCommand);
+  exec(dockerCommand, (error, stdout, stderr) => {
+    if (error) {
+      console.error('exec error:' + error);
+    }
+    console.log("stdout " + stdout)
+    success(stdout);
+  });
 }
 
 

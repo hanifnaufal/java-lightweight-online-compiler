@@ -8,9 +8,9 @@ function random(size) {
 var Compile = {};
 // TODO res
 Compile.compile = function(code, stdin, res) {
-    var workingDirectory= '/tmp/elcompilo/' + random(10);
-    var timeout_value=20;
-    
+    var workingDirectory = '/tmp/elcompilo/' + random(10);
+    var timeout_value = 20;
+
     var sandboxType = new sandbox(
       timeout_value,
       workingDirectory,
@@ -18,15 +18,14 @@ Compile.compile = function(code, stdin, res) {
       stdin
     );
 
-    sandboxType.run(function(data,exec_time,err)
-    {
-      console.log("Data: received: "+ data)
+    sandboxType.run((output) => {
+      console.log("Data: "+ output)
       res.send({
-        output:data,
-        langid: language,
+        output:output,
+        langid: "language",
         code:code,
-        errors:err,
-        time:exec_time
+        errors:"err",
+        time:"exec_time"
       });
     });
 
