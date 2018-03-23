@@ -17,7 +17,8 @@ bruteforce = new ExpressBrute(store,{
 
 var indexRouter = require('./routes/index');
 app.use(express.static(__dirname));
-app.use(bodyParser());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 app.use('/', indexRouter);
 
 app.all('*', function(req, res, next)

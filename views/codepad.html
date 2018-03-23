@@ -102,7 +102,7 @@ Templating:
             code: code,
             stdin: stdin,
             args: args
-        };        
+        };
 
         $.post("/compile", json, function(data, error, xhr) {
             resultEditor.setValue(data.output);
@@ -114,7 +114,7 @@ Templating:
     });
 
     $( document ).ready(function() {
-        generateTemplate("");
+        generateTemplate('System.out.println("Hello World!");');
     });
 
     function generateTemplate(insideCode) {
