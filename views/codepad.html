@@ -42,14 +42,13 @@ Result:
     //ACE
     ace.require("ace/ext/language_tools");
 
-    var defaultLiveEditorContent = "public class Main {\n  public static void main(String[] args) {\n    for (int i = 0;i < 5; i++) \n    System.out.println(\"Hello World\");\n  }\n}\n";
-    var mainEditor = constructLiveEditor("mainEditor", defaultLiveEditorContent);
+    var mainEditor = constructLiveEditor("mainEditor");
     var resultEditor = constructNotLiveEditor("resultEditor", 5);
     resultEditor.setReadOnly(true);
     var inputEditor = constructNotLiveEditor("inputEditor", 1, 20);
     var argumentEditor = constructNotLiveEditor("argumentEditor", 1, 20);
 
-    function constructLiveEditor(editorNamespace, defaultContent) {
+    function constructLiveEditor(editorNamespace) {
       var editor = ace.edit(editorNamespace);
       constructDefaultEditor(editor);
       editor.setTheme("ace/theme/monokai");
@@ -59,7 +58,6 @@ Result:
           enableSnippets: true,
           enableLiveAutocompletion: true
       });
-      editor.setValue(defaultContent);
       return editor;
     }
 
@@ -104,8 +102,14 @@ Result:
             resultEditor.setValue(data.output);
         });
     });
-
-
+    $( document ).ready(function() {
+      var json = {
+          insideCode: ""
+      };
+      $.post("/generateCode", json, function(data, error, xhr) {
+          mainEditor.setValue(data.code);
+      });
+    });
 </script>
 </body>
 </html>

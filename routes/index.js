@@ -1,5 +1,6 @@
 var app = require('express');
 var compile = require('../bin/compile')
+var codeGenerator = require('../bin/codeGenerator')
 var router = app.Router();
 
 router.get('/', function(req, res, next)
@@ -19,7 +20,12 @@ router.post('/compile', bruteforce.prevent, function(req, res, next)
     );
 });
 router.post('/generateCode', bruteforce.prevent, function(req, res, next) {
-
+    codeGenerator.generate(
+        req.body.insideCode,
+        (result) => {
+            res.send(result);
+        }
+    );
 })
 
 module.exports = router;
