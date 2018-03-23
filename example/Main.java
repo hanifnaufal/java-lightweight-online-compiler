@@ -5,7 +5,7 @@ public class Main {
     while(sc.hasNext()) {
       System.out.println(sc.nextLine());
     }
-    for (int i = 0;i < 5; i++) {
+    for (int i = 0; i < 5; i++) {
       System.out.println("Hello World");
     }
   }

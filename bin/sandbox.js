@@ -116,10 +116,10 @@ Sandbox.prototype.execute = function(callback) {
 
   exec(dockerCommand, (error, stdout, stderr) => {
     if (error) {
-      console.error('exec error:' + error);
-      callback(errorMessage);
+      callback(stderr);
+    } else {
+      callback(stdout);
     }
-    callback(stdout);
   });
 }
 
