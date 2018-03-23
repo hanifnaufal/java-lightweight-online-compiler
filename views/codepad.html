@@ -25,13 +25,14 @@
   <button id="compileBtn">compile</button>
   <button id="screenBtn">Fullscreen</button>
 </div>
-<div class="result">
-  It is something
+<div id="resultEditor" class="result">
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.1/ace.js" type="text/javascript" charset="utf-8"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.1/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
 <script>
+    //ACE
     ace.require("ace/ext/language_tools");
     var editor = ace.edit("mainEditor");
     editor.setTheme("ace/theme/monokai");
@@ -54,6 +55,22 @@
         readOnly: true // false if this command should not apply in readOnly mode
     });
 
+    //COMPILE USER GIVEN CODE
+    $('#compileBtn').on('click', function() {
+        var code = editor.getValue();
+        // TODO stdin
+        // var stdin = $('#stdin').val();
+        var stdin = "";
+        var json = {
+            code: code,
+            stdin: stdin
+        };
+        console.log(json);
+
+        $.post("/compile", json, function(data, error, xhr) {
+            $('#resultEditor').text(data.output);
+        });
+    });
 
 
 </script>
