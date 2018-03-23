@@ -49,42 +49,42 @@ Result:
     var argumentEditor = constructNotLiveEditor("argumentEditor", 1, 20);
 
     function constructLiveEditor(editorNamespace) {
-      var editor = ace.edit(editorNamespace);
-      constructDefaultEditor(editor);
-      editor.setTheme("ace/theme/monokai");
-      editor.session.setMode("ace/mode/java");
-      editor.setOptions({
-          enableBasicAutocompletion: true,
-          enableSnippets: true,
-          enableLiveAutocompletion: true
-      });
-      return editor;
+        var editor = ace.edit(editorNamespace);
+        constructDefaultEditor(editor);
+        editor.setTheme("ace/theme/monokai");
+        editor.session.setMode("ace/mode/java");
+        editor.setOptions({
+            enableBasicAutocompletion: true,
+            enableSnippets: true,
+            enableLiveAutocompletion: true
+        });
+        return editor;
     }
 
     function constructNotLiveEditor(editorNamespace, minLines, maxLines) {
-      var editor = ace.edit(editorNamespace);
-      constructDefaultEditor(editor);
-      editor.setTheme("ace/theme/textmate");
-      editor.session.setMode("ace/mode/text");
-      editor.renderer.setShowGutter(false);
-      editor.setHighlightActiveLine(false);
-      editor.setOption("minLines", minLines);
-      editor.setOption("maxLines", maxLines);
-      return editor;
+        var editor = ace.edit(editorNamespace);
+        constructDefaultEditor(editor);
+        editor.setTheme("ace/theme/textmate");
+        editor.session.setMode("ace/mode/text");
+        editor.renderer.setShowGutter(false);
+        editor.setHighlightActiveLine(false);
+        editor.setOption("minLines", minLines);
+        editor.setOption("maxLines", maxLines);
+        return editor;
     }
 
     function constructDefaultEditor(editor) {
-      editor.setAutoScrollEditorIntoView(true);
-      editor.setOption("showPrintMargin", false);
-      editor.session.setTabSize(2);
-      editor.commands.addCommand({
-          name: 'NotSave',
-          bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
-          exec: function(editor) {
-              //no - op
-          },
-          readOnly: true
-      });
+        editor.setAutoScrollEditorIntoView(true);
+        editor.setOption("showPrintMargin", false);
+        editor.session.setTabSize(2);
+        editor.commands.addCommand({
+            name: 'NotSave',
+            bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
+            exec: function(editor) {
+                //no - op
+            },
+            readOnly: true
+        });
     }
 </script>
 <script>
@@ -103,12 +103,12 @@ Result:
         });
     });
     $( document ).ready(function() {
-      var json = {
-          insideCode: ""
-      };
-      $.post("/generateCode", json, function(data, error, xhr) {
-          mainEditor.setValue(data.code);
-      });
+        var json = {
+            insideCode: ""
+        };
+        $.post("/generateCode", json, function(data, error, xhr) {
+            mainEditor.setValue(data.code);
+        });
     });
 </script>
 </body>
