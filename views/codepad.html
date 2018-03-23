@@ -7,7 +7,7 @@
 <title>ACE in Action</title>
 <style type="text/css" media="screen">
 
-    .mainEditor, .toolbar, .resultEditor, .inputEditor, .argumentEditor {
+    .mainEditor, .resultEditor, .inputEditor, .argumentEditor {
         border: 1px solid lightgray;
         margin: auto;
         width: 100%;
@@ -16,21 +16,24 @@
         height: 200px;
     }
     .resultEditor {
-        height: 50px;
+        min-height: 70px;
     }
 
 </style>
 </head>
 <body>
-
-<div id="mainEditor" class="mainEditor resizable"></div>
+Code:
+<div id="mainEditor" class="mainEditor"></div>
 <div class="toolbar">
   <button id="compileBtn">Compile</button>
   <button id="inputBtn">Input</button>
   <button id="argumentBtn">Argument</button>
 </div>
+Input:
 <div id="inputEditor" class="inputEditor"></div>
+Argument:
 <div id="argumentEditor" class="argumentEditor"></div>
+Result:
 <div id="resultEditor" class="resultEditor"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
@@ -39,13 +42,15 @@
 <script>
     //ACE
     ace.require("ace/ext/language_tools");
-    var mainEditor = ace.edit("mainEditor");
-    var defaultLiveEditorContent = "public class Main {\r\n  public static void main(String[] args) {\r\n    System.out.println(\"Hello World\");\r\n  }\r\n}\r\n";
-    constructLiveEditor(mainEditor, defaultLiveEditorContent);
-    var resultEditor = ace.edit("resultEditor");
-    constructReadOnlyEditor(resultEditor, 5);
 
-    function constructLiveEditor(editor, defaultContent) {
+    var defaultLiveEditorContent = "public class Main {\r\n  public static void main(String[] args) {\r\n    for (int i = 0;i < 5; i++) \r\n    System.out.println(\"Hello World\");\r\n  }\r\n}\r\n";
+    var mainEditor = constructLiveEditor("mainEditor", defaultLiveEditorContent);
+    var resultEditor = constructReadOnlyEditor("resultEditor", 5);
+    var inputEditor = constructReadOnlyEditor("inputEditor", 1, 20);
+    var argumentEditor = constructReadOnlyEditor("argumentEditor", 1, 20);
+
+    function constructLiveEditor(editorNamespace, defaultContent) {
+      var editor = ace.edit(editorNamespace);
       constructDefaultEditor(editor);
       editor.setTheme("ace/theme/monokai");
       editor.session.setMode("ace/mode/java");
@@ -55,9 +60,11 @@
           enableLiveAutocompletion: true
       });
       editor.setValue(defaultContent);
+      return editor;
     }
 
-    function constructReadOnlyEditor(editor, minLines) {
+    function constructReadOnlyEditor(editorNamespace, minLines, maxLines) {
+      var editor = ace.edit(editorNamespace);
       constructDefaultEditor(editor);
       editor.setTheme("ace/theme/textmate");
       editor.session.setMode("ace/mode/text");
@@ -65,10 +72,13 @@
       editor.renderer.setShowGutter(false);
       editor.setHighlightActiveLine(false);
       editor.setOption("minLines", minLines);
+      editor.setOption("maxLines", maxLines);
+      return editor;
     }
 
     function constructDefaultEditor(editor) {
       editor.setAutoScrollEditorIntoView(true);
+      editor.setOption("showPrintMargin", false);
       editor.session.setTabSize(2);
       editor.commands.addCommand({
           name: 'NotSave',
