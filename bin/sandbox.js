@@ -116,36 +116,27 @@ Sandbox.prototype.execute = function(callback) {
   }
 
   var execOption = {
-    // TODO correct timeout
-    // timeout: sandbox.timeout_value
-    timeout: 3000
+    timeout: sandbox.timeout_value
   };
 
   var dockerExec = exec(dockerCommand, execOption, (error, stdout, stderr) => {
+    // console.log(error + "/" + stdout + "/" + stderr);
     if (error) {
-      callback(stderr);
+      if (error.signal != "SIGTERM") {
+        callback(stderr);
+      }
     } else {
+      console.log("b");
       callback(stdout);
     }
   });
-
+  //TODO rm not working with this 
   dockerExec.on('exit', function (code, signal) {
+    // console.log(code + "/" + signal);
     if (signal == "SIGTERM") {
       callback("Timeout");
     }
   });
-  //
-  // var timeoutValueMsec = 5 * 1000;
-  // var timeoutInterval = setInterval(() => {
-  //   var getCIDCommands = "cat " + sandbox.workingDirectory + "/docker.cid";
-  //   exec(getCIDCommands, (error, stdout, stderr) => {
-  //     var killCommand = "docker kill -s SIGKILL " + stdout;
-  //     exec(killCommand, (error, stdout, stderr) => {
-  //       callback("Timeout");
-  //     });
-  //   });
-  //   clearInterval(timeoutInterval);
-  // }, timeoutValueMsec);
 }
 
 
