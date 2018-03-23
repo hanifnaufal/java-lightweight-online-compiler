@@ -108,15 +108,14 @@ Sandbox.prototype.execute = function(callback) {
     dockerCommand = "docker run --rm"
                     + " --cidfile " + sandbox.workingDirectory + "/docker.cid"
                     + " -v " + sandbox.workingDirectory + ":/mnt --workdir /mnt " + sandbox.vm_name
-                    + " sh -c 'javac " + sandbox.file_name + " && java Main " + sandbox.args + " < inputFile'"
-                    + " && rm -r " + sandbox.workingDirectory;
+                    + " sh -c 'javac " + sandbox.file_name + " && java Main " + sandbox.args + " < inputFile'";
   } else {
-    dockerCommand = " javac " + sandbox.workingDirectory + "/" +  sandbox.file_name + " && java -classpath " + sandbox.workingDirectory + "/ Main " + sandbox.args + " < " + sandbox.workingDirectory + "/inputFile"
-                    + " && rm -r " + sandbox.workingDirectory;
+    dockerCommand = " javac " + sandbox.workingDirectory + "/" +  sandbox.file_name + " && java -classpath " + sandbox.workingDirectory + "/ Main " + sandbox.args + " < " + sandbox.workingDirectory + "/inputFile";
   }
 
+  var timeoutMsec = sandbox.timeout_value * 1000;
   var execOption = {
-    timeout: sandbox.timeout_value
+    timeout: timeoutMsec
   };
 
   var dockerExec = exec(dockerCommand, execOption, (error, stdout, stderr) => {
@@ -126,13 +125,21 @@ Sandbox.prototype.execute = function(callback) {
         callback(stderr);
       }
     } else {
-      console.log("b");
       callback(stdout);
     }
   });
-  //TODO rm not working with this 
+
   dockerExec.on('exit', function (code, signal) {
     // console.log(code + "/" + signal);
+
+    var cleanUpCommand = "rm -r " + sandbox.workingDirectory;
+    exec(cleanUpCommand, (error, stdout, stderr) => {
+      if (error || stderr) {
+        console.log("error: " + error);
+        console.log("stderr: " + stderr);
+      }
+    });
+
     if (signal == "SIGTERM") {
       callback("Timeout");
     }
