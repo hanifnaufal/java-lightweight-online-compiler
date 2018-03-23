@@ -11,17 +11,17 @@ Compile.compile = (code, stdin, args, callback) => {
     var timeout_value = 20;
 
     var sandboxType = new sandbox(
-      timeout_value,
-      workingDirectory,
-      code,
-      stdin,
-      args
+        timeout_value,
+        workingDirectory,
+        code,
+        stdin,
+        args
     );
 
     sandboxType.run((output) => {
-      callback({
-        output:output
-      });
+        callback({
+            output:output
+        });
     });
 
 };
