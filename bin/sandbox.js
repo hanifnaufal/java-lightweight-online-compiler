@@ -107,7 +107,7 @@ Sandbox.prototype.execute = function(callback) {
   var dockerCommand;
   if (env == 'prod') {
     dockerCommand = "docker run --rm"
-                    + " --stop-timeout " + sandbox.timeout_value
+                    + " --cidfile " + sandbox.workingDirectory + "/docker.cid"
                     + " -v " + sandbox.workingDirectory + ":/mnt --workdir /mnt " + sandbox.vm_name
                     + " sh -c 'javac " + sandbox.file_name + " && java Main " + sandbox.args + " < inputFile'"
                     + " && rm -r " + sandbox.workingDirectory;
@@ -123,6 +123,11 @@ Sandbox.prototype.execute = function(callback) {
       callback(stdout);
     }
   });
+
+  var timeoutValueMsec = sandbox.timeout_value * 1000;
+  var timeoutInterval = setInterval(() => {
+    clearInterval(timeoutInterval);
+  }, timeoutValueMsec);
 }
 
 
