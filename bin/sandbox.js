@@ -103,7 +103,6 @@ Sandbox.prototype.execute = function(callback) {
   var timeoutCounter = 0;
   var sandbox = this;
 
-  //TODO timeout not working
   var dockerCommand;
   if (env == 'prod') {
     dockerCommand = "docker run --rm"
@@ -116,7 +115,13 @@ Sandbox.prototype.execute = function(callback) {
                     + " && rm -r " + sandbox.workingDirectory;
   }
 
-  exec(dockerCommand, (error, stdout, stderr) => {
+  var execOption = {
+    // TODO correct timeout
+    // timeout: sandbox.timeout_value
+    timeout: 3000
+  };
+
+  var dockerExec = exec(dockerCommand, execOption, (error, stdout, stderr) => {
     if (error) {
       callback(stderr);
     } else {
@@ -124,17 +129,23 @@ Sandbox.prototype.execute = function(callback) {
     }
   });
 
-  var timeoutValueMsec = 5 * 1000;
-  var timeoutInterval = setInterval(() => {
-    var getCIDCommands = "cat " + sandbox.workingDirectory + "/docker.cid";
-    exec(getCIDCommands, (error, stdout, stderr) => {
-      var killCommand = "docker kill -s SIGKILL " + stdout;
-      exec(killCommand, (error, stdout, stderr) => {
-        callback("Timeout");
-      });
-    });
-    clearInterval(timeoutInterval);
-  }, timeoutValueMsec);
+  dockerExec.on('exit', function (code, signal) {
+    if (signal == "SIGTERM") {
+      callback("Timeout");
+    }
+  });
+  //
+  // var timeoutValueMsec = 5 * 1000;
+  // var timeoutInterval = setInterval(() => {
+  //   var getCIDCommands = "cat " + sandbox.workingDirectory + "/docker.cid";
+  //   exec(getCIDCommands, (error, stdout, stderr) => {
+  //     var killCommand = "docker kill -s SIGKILL " + stdout;
+  //     exec(killCommand, (error, stdout, stderr) => {
+  //       callback("Timeout");
+  //     });
+  //   });
+  //   clearInterval(timeoutInterval);
+  // }, timeoutValueMsec);
 }
 
 
