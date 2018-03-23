@@ -7,7 +7,7 @@
 <title>ACE in Action</title>
 <style type="text/css" media="screen">
 
-    .mainEditor, .resultEditor, .inputEditor, .argumentEditor {
+    .mainEditor, .resultEditor, .inputEditor, .argumentEditor, .templateEditor {
         border: 1px solid lightgray;
         margin: auto;
         width: 100%;
@@ -34,6 +34,11 @@ Command Argument:
 <div id="argumentEditor" class="argumentEditor"></div>
 Result:
 <div id="resultEditor" class="resultEditor"></div>
+Templating:
+<div id="templateEditor" class="templateEditor"></div>
+<div class="toolbar">
+  <button id="templateBtn">Generate Template</button>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.1/ace.js" type="text/javascript" charset="utf-8"></script>
@@ -47,6 +52,7 @@ Result:
     resultEditor.setReadOnly(true);
     var inputEditor = constructNotLiveEditor("inputEditor", 1, 20);
     var argumentEditor = constructNotLiveEditor("argumentEditor", 1, 20);
+    var templateEditor = constructNotLiveEditor("templateEditor", 1, 20);
 
     function constructLiveEditor(editorNamespace) {
         var editor = ace.edit(editorNamespace);
@@ -96,20 +102,29 @@ Result:
             code: code,
             stdin: stdin,
             args: args
-        };
+        };        
 
         $.post("/compile", json, function(data, error, xhr) {
             resultEditor.setValue(data.output);
         });
     });
+
+    $('#templateBtn').on('click', function() {
+        generateTemplate(templateEditor.getValue());
+    });
+
     $( document ).ready(function() {
+        generateTemplate("");
+    });
+
+    function generateTemplate(insideCode) {
         var json = {
-            insideCode: ""
+            insideCode: insideCode
         };
         $.post("/generateCode", json, function(data, error, xhr) {
             mainEditor.setValue(data.code);
         });
-    });
+    }
 </script>
 </body>
 </html>
