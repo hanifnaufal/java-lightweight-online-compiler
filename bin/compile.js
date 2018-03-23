@@ -6,7 +6,7 @@ function random(size) {
 }
 
 var Compile = {};
-Compile.compile = (code, stdin, callback) => {
+Compile.compile = (code, stdin, args, callback) => {
     var workingDirectory = '/tmp/elcompilo/' + random(10);
     var timeout_value = 20;
 
@@ -14,13 +14,13 @@ Compile.compile = (code, stdin, callback) => {
       timeout_value,
       workingDirectory,
       code,
-      stdin
+      stdin,
+      args
     );
 
     sandboxType.run((output) => {
       callback({
-        output:output,
-        code:code
+        output:output
       });
     });
 

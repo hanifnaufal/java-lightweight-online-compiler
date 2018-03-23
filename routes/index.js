@@ -8,10 +8,11 @@ router.get('/', function(req, res, next)
 });
 
 router.post('/compile', bruteforce.prevent, function(req, res, next)
-{
+{    
     compile.compile(
       req.body.code,
       req.body.stdin,
+      req.body.args,
       (result) => {
         res.send(result);
       }

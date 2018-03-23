@@ -12,11 +12,13 @@ var Sandbox = function(
   timeout_value,
   workingDirectory,
   code,
-  stdin_data
+  stdin_data,
+  args
 ){
   this.timeout_value = timeout_value;
   this.code = code;
   this.stdin_data = stdin_data;
+  this.args = args;
   this.workingDirectory = workingDirectory;
 
   this.file_name = "Main.java";
@@ -107,10 +109,10 @@ Sandbox.prototype.execute = function(callback) {
     dockerCommand = "docker run --rm"
                     + " --stop-timeout " + sandbox.timeout_value
                     + " -v " + sandbox.workingDirectory + ":/mnt --workdir /mnt " + sandbox.vm_name
-                    + " sh -c 'javac " + sandbox.file_name + " && java Main < inputFile'"
+                    + " sh -c 'javac " + sandbox.file_name + " && java Main " + sandbox.args + " < inputFile'"
                     + " && rm -r " + sandbox.workingDirectory;
   } else {
-    dockerCommand = " javac " + sandbox.workingDirectory + "/" +  sandbox.file_name + " && java -classpath " + sandbox.workingDirectory + "/ Main < " + sandbox.workingDirectory + "/inputFile"
+    dockerCommand = " javac " + sandbox.workingDirectory + "/" +  sandbox.file_name + " && java -classpath " + sandbox.workingDirectory + "/ Main " + sandbox.args + " < " + sandbox.workingDirectory + "/inputFile"
                     + " && rm -r " + sandbox.workingDirectory;
   }
 

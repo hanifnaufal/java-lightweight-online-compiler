@@ -92,14 +92,15 @@ Result:
 <script>
     $('#compileBtn').on('click', function() {
         var code = mainEditor.getValue();
-        var stdin = inputEditor.getValue();;
+        var stdin = inputEditor.getValue();
+        var args = argumentEditor.getValue();
         var json = {
             code: code,
-            stdin: stdin
+            stdin: stdin,
+            args: args
         };
 
         $.post("/compile", json, function(data, error, xhr) {
-            // $('#resultEditor').text(data.output);
             resultEditor.setValue(data.output);
         });
     });
