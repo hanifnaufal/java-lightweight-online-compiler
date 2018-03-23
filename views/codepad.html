@@ -22,16 +22,15 @@
 </style>
 </head>
 <body>
+
 Code:
 <div id="mainEditor" class="mainEditor"></div>
 <div class="toolbar">
   <button id="compileBtn">Compile</button>
-  <button id="inputBtn">Input</button>
-  <button id="argumentBtn">Argument</button>
 </div>
 Input:
 <div id="inputEditor" class="inputEditor"></div>
-Argument:
+Command Argument:
 <div id="argumentEditor" class="argumentEditor"></div>
 Result:
 <div id="resultEditor" class="resultEditor"></div>
@@ -45,9 +44,10 @@ Result:
 
     var defaultLiveEditorContent = "public class Main {\r\n  public static void main(String[] args) {\r\n    for (int i = 0;i < 5; i++) \r\n    System.out.println(\"Hello World\");\r\n  }\r\n}\r\n";
     var mainEditor = constructLiveEditor("mainEditor", defaultLiveEditorContent);
-    var resultEditor = constructReadOnlyEditor("resultEditor", 5);
-    var inputEditor = constructReadOnlyEditor("inputEditor", 1, 20);
-    var argumentEditor = constructReadOnlyEditor("argumentEditor", 1, 20);
+    var resultEditor = constructNotLiveEditor("resultEditor", 5);
+    resultEditor.setReadOnly(true);
+    var inputEditor = constructNotLiveEditor("inputEditor", 1, 20);
+    var argumentEditor = constructNotLiveEditor("argumentEditor", 1, 20);
 
     function constructLiveEditor(editorNamespace, defaultContent) {
       var editor = ace.edit(editorNamespace);
@@ -63,12 +63,11 @@ Result:
       return editor;
     }
 
-    function constructReadOnlyEditor(editorNamespace, minLines, maxLines) {
+    function constructNotLiveEditor(editorNamespace, minLines, maxLines) {
       var editor = ace.edit(editorNamespace);
       constructDefaultEditor(editor);
       editor.setTheme("ace/theme/textmate");
       editor.session.setMode("ace/mode/text");
-      editor.setReadOnly(true);
       editor.renderer.setShowGutter(false);
       editor.setHighlightActiveLine(false);
       editor.setOption("minLines", minLines);
@@ -93,9 +92,7 @@ Result:
 <script>
     $('#compileBtn').on('click', function() {
         var code = mainEditor.getValue();
-        // TODO stdin
-        // var stdin = $('#stdin').val();
-        var stdin = "";
+        var stdin = inputEditor.getValue();;
         var json = {
             code: code,
             stdin: stdin
