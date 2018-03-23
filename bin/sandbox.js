@@ -124,8 +124,15 @@ Sandbox.prototype.execute = function(callback) {
     }
   });
 
-  var timeoutValueMsec = sandbox.timeout_value * 1000;
+  var timeoutValueMsec = 5 * 1000;
   var timeoutInterval = setInterval(() => {
+    var getCIDCommands = "cat " + sandbox.workingDirectory + "/docker.cid";
+    exec(getCIDCommands, (error, stdout, stderr) => {
+      var killCommand = "docker kill -s SIGKILL " + stdout;
+      exec(killCommand, (error, stdout, stderr) => {
+        callback("Timeout");
+      });
+    });
     clearInterval(timeoutInterval);
   }, timeoutValueMsec);
 }
