@@ -9,23 +9,23 @@ const errorMessage = "Site System Error. Sorry for the inconvenience.";
   * @param {String} code: The actual code
 */
 var Sandbox = function(
-  timeout_value,
-  workingDirectory,
-  code,
-  stdin_data,
-  args
+    timeout_value,
+    workingDirectory,
+    code,
+    stdin_data,
+    args
 ){
-  this.timeout_value = timeout_value;
-  this.code = code;
-  this.stdin_data = stdin_data;
-  this.args = args;
-  this.workingDirectory = workingDirectory;
+    this.timeout_value = timeout_value;
+    this.code = code;
+    this.stdin_data = stdin_data;
+    this.args = args;
+    this.workingDirectory = workingDirectory;
 
-  this.file_name = "Main.java";
-  this.vm_name = "frolvlad/alpine-oraclejdk8:slim";
+    this.file_name = "Main.java";
+    this.vm_name = "frolvlad/alpine-oraclejdk8:slim";
 
-  this.codeAbsolutePath = this.workingDirectory + "/" + this.file_name;
-  this.stdinAbsolutePath = this.workingDirectory + "/inputFile";
+    this.codeAbsolutePath = this.workingDirectory + "/" + this.file_name;
+    this.stdinAbsolutePath = this.workingDirectory + "/inputFile";
 }
 
 /**
@@ -36,10 +36,10 @@ var Sandbox = function(
 */
 Sandbox.prototype.run = function(callback)
 {
-  var sandbox = this;
-  this.prepare(function() {
-      sandbox.execute(callback);
-  });
+    var sandbox = this;
+    this.prepare(function() {
+        sandbox.execute(callback);
+    });
 }
 
 /**
@@ -54,30 +54,30 @@ Sandbox.prototype.run = function(callback)
  * @param {Function pointer} callback
 */
 Sandbox.prototype.prepare = function(callback) {
-  var exec = require('child_process').exec;
-  var fs = require('fs');
-  var sandbox = this;
-  var commands =
-    "mkdir -p " + sandbox.workingDirectory + " && " +
-    "chmod 777 " + sandbox.workingDirectory;
+    var exec = require('child_process').exec;
+    var fs = require('fs');
+    var sandbox = this;
+    var commands =
+        "mkdir -p " + sandbox.workingDirectory + " && " +
+        "chmod 777 " + sandbox.workingDirectory;
 
-  exec(commands, function(st) {
-    fs.writeFile(sandbox.codeAbsolutePath, sandbox.code, function(err) {
-        if (err) {
-          console.log(err);
-        } else {
-          exec("chmod 777 " + sandbox.codeAbsolutePath);
+    exec(commands, function(st) {
+        fs.writeFile(sandbox.codeAbsolutePath, sandbox.code, function(err) {
+            if (err) {
+                console.log(err);
+            } else {
+                exec("chmod 777 " + sandbox.codeAbsolutePath);
 
-          fs.writeFile(sandbox.stdinAbsolutePath, sandbox.stdin_data, function(err) {
-              if (err) {
-                  console.log(err);
-              } else {
-                  callback();
-              }
-          });
-        }
+                fs.writeFile(sandbox.stdinAbsolutePath, sandbox.stdin_data, function(err) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        callback();
+                    }
+                });
+            }
+        });
     });
-  });
 }
 
 
@@ -98,31 +98,31 @@ Sandbox.prototype.prepare = function(callback) {
 */
 
 Sandbox.prototype.execute = function(callback) {
-  var exec = require('child_process').exec;
-  var fs = require('fs');
-  var timeoutCounter = 0;
-  var sandbox = this;
+    var exec = require('child_process').exec;
+    var fs = require('fs');
+    var timeoutCounter = 0;
+    var sandbox = this;
 
-  //TODO timeout not working
-  var dockerCommand;
-  if (env == 'prod') {
-    dockerCommand = "docker run --rm"
-                    + " --stop-timeout " + sandbox.timeout_value
-                    + " -v " + sandbox.workingDirectory + ":/mnt --workdir /mnt " + sandbox.vm_name
-                    + " sh -c 'javac " + sandbox.file_name + " && java Main " + sandbox.args + " < inputFile'"
-                    + " && rm -r " + sandbox.workingDirectory;
-  } else {
-    dockerCommand = " javac " + sandbox.workingDirectory + "/" +  sandbox.file_name + " && java -classpath " + sandbox.workingDirectory + "/ Main " + sandbox.args + " < " + sandbox.workingDirectory + "/inputFile"
-                    + " && rm -r " + sandbox.workingDirectory;
-  }
-
-  exec(dockerCommand, (error, stdout, stderr) => {
-    if (error) {
-      callback(stderr);
+    //TODO timeout not working
+    var dockerCommand;
+    if (env == 'prod') {
+        dockerCommand = "docker run --rm"
+                        + " --stop-timeout " + sandbox.timeout_value
+                        + " -v " + sandbox.workingDirectory + ":/mnt --workdir /mnt " + sandbox.vm_name
+                        + " sh -c 'javac " + sandbox.file_name + " && java Main " + sandbox.args + " < inputFile'"
+                        + " && rm -r " + sandbox.workingDirectory;
     } else {
-      callback(stdout);
+        dockerCommand = " javac " + sandbox.workingDirectory + "/" +  sandbox.file_name + " && java -classpath " + sandbox.workingDirectory + "/ Main " + sandbox.args + " < " + sandbox.workingDirectory + "/inputFile"
+                        + " && rm -r " + sandbox.workingDirectory;
     }
-  });
+
+    exec(dockerCommand, (error, stdout, stderr) => {
+        if (error) {
+            callback(stderr);
+        } else {
+            callback(stdout);
+        }
+    });
 }
 
 

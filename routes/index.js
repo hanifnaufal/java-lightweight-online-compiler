@@ -8,7 +8,7 @@ router.get('/', function(req, res, next)
 });
 
 router.post('/compile', bruteforce.prevent, function(req, res, next)
-{    
+{
     compile.compile(
       req.body.code,
       req.body.stdin,
@@ -18,5 +18,8 @@ router.post('/compile', bruteforce.prevent, function(req, res, next)
       }
     );
 });
+router.post('/generateCode', bruteforce.prevent, function(req, res, next) {
+    
+})
 
 module.exports = router;

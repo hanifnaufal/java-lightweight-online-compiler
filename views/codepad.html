@@ -42,7 +42,7 @@ Result:
     //ACE
     ace.require("ace/ext/language_tools");
 
-    var defaultLiveEditorContent = "public class Main {\r\n  public static void main(String[] args) {\r\n    for (int i = 0;i < 5; i++) \r\n    System.out.println(\"Hello World\");\r\n  }\r\n}\r\n";
+    var defaultLiveEditorContent = "public class Main {\n  public static void main(String[] args) {\n    for (int i = 0;i < 5; i++) \n    System.out.println(\"Hello World\");\n  }\n}\n";
     var mainEditor = constructLiveEditor("mainEditor", defaultLiveEditorContent);
     var resultEditor = constructNotLiveEditor("resultEditor", 5);
     resultEditor.setReadOnly(true);
