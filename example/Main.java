@@ -5,6 +5,11 @@ public class Main {
     while(sc.hasNext()) {
       System.out.println(sc.nextLine());
     }
+
+    for (int i = 0; i < args.length; i++) {
+      System.out.println(args[i]);
+    }
+
     for (int i = 0; i < 5; i++) {
       System.out.println("Hello World");
     }
